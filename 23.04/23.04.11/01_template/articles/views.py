@@ -79,3 +79,14 @@ def comments_delete(request, pk, comment_pk):
         if request.user == comment.user:
             comment.delete()
     return redirect('articles:detail', pk)
+
+# @require_POST
+def likes(request, article_pk):
+    if request.user.is_authenticated:
+        article = Article.objects.get(pk=article_pk)
+        if article.like_users.filter(pk=request.user.pk).exists():
+            article.like_users.remove(request.user)
+        else:
+            article.like_users.add(request.user)
+        return redirect('articles:index')
+    return redirect('accounts:login')
